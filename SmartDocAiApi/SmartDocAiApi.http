@@ -1,0 +1,6 @@
+@SmartDocAiApi_HostAddress = http://localhost:5147
+
+GET {{SmartDocAiApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
