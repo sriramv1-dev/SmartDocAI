@@ -74,20 +74,14 @@ builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    // app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// app.MapOpenApi();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+
+app.MapGet("/", () => "SmartDoc API is running");
+
 app.Run();
-
-
-// DefaultEndpointsProtocol = https;
-// AccountName = smartdocstoragesriram;
-// AccountKey = eqBOjOjpXOvg0FTcat66TOkLV51no6wOqWzkxJXALhFDlKpleqwqkokgibdEuJksTQPL0hzfpfzN + AStxiRjxQ ==;
-// EndpointSuffix=core.windows.net
