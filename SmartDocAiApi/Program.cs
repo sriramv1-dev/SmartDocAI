@@ -15,7 +15,7 @@ var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?
 
 
 builder.Configuration
-    // .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
@@ -41,16 +41,9 @@ builder.Services.Configure<AzureBlobSettings>(
 
 builder.Services.AddSingleton(sp =>
 {
-    // var blobSettings = sp.GetRequiredService<IOptions<AzureBlobSettings>>().Value;
-    // return new BlobServiceClient(blobSettings.ConnectionString);
 
     // Retrieve the configured AzureBlobSettings
     var blobSettings = sp.GetRequiredService<IOptions<AzureBlobSettings>>().Value;
-
-    // --- DIAGNOSTIC START: Check AzureBlobSettings object after binding ---
-    Console.WriteLine($"--- DIAGNOSTIC: From IOptions<AzureBlobSettings> - ConnectionString: '{blobSettings.ConnectionString}' ---");
-    Console.WriteLine($"--- DIAGNOSTIC: From IOptions<AzureBlobSettings> - ContainerName: '{blobSettings.ContainerName}' ---");
-    // --- DIAGNOSTIC END ---
 
     // This is the line that's failing if blobSettings.ConnectionString is null
     // Add a null check here to provide a more specific error if needed
