@@ -22,11 +22,19 @@ namespace SmartDocAiApi.Services.impl
 
         public async Task<string> UploadAsync(IFormFile file)
         {
-            var blobClient = _containerClient.GetBlobClient(file.FileName);
-            await using var stream = file.OpenReadStream();
-            await blobClient.UploadAsync(stream, true);
+            try
+            {
+                var blobClient = _containerClient.GetBlobClient(file.FileName);
+                await using var stream = file.OpenReadStream();
+                await blobClient.UploadAsync(stream, overwrite: true);
 
-            return blobClient.Uri.ToString();
+                return blobClient.Uri.ToString();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error uploading file to blob storage: {ex.Message}");
+                throw;
+            }
         }
 
     }

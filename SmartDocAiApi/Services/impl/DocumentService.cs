@@ -14,14 +14,24 @@ namespace SmartDocAiApi.Services.impl
         public async Task<Document> UploadDocumentsAsync(IFormFile file)
         {
 
-            var bloburl = await _blobService.UploadAsync(file);
-            var document = new Document
+            try
             {
-                FileName = file.FileName,
-                BlobUrl = bloburl
-            };
+                var blobUrl = await _blobService.UploadAsync(file);
+                var document = new Document
+                {
+                    FileName = file.FileName,
+                    BlobUrl = blobUrl
+                };
 
-            return await _repo.AddDocumentAsync(document);
+                return await _repo.AddDocumentAsync(document);
+            }
+            catch (Exception ex)
+            {
+                // Log the error - replace with your logger if available
+                Console.WriteLine($"Error uploading document: {ex.Message}");
+                // Optionally, you can rethrow or handle the error gracefully
+                throw;
+            }
 
         }
     }
