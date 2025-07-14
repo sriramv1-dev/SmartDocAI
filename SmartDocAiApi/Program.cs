@@ -9,6 +9,7 @@ using SmartDocAiApi.Services.impl;
 using SmartDocAiApi.Swagger;
 
 DotNetEnv.Env.Load();
+// DotNetEnv.Env.Load(".env.production.local");
 
 var builder = WebApplication.CreateBuilder(args);
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
@@ -39,17 +40,20 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.Configure<AzureBlobSettings>(
     builder.Configuration.GetSection("AzureBlobSettings"));
 
+// Register BlobServiceClient as singleton
 builder.Services.AddSingleton(sp =>
 {
 
     // Retrieve the configured AzureBlobSettings
     var blobSettings = sp.GetRequiredService<IOptions<AzureBlobSettings>>().Value;
 
-    // This is the line that's failing if blobSettings.ConnectionString is null
-    // Add a null check here to provide a more specific error if needed
-    if (string.IsNullOrEmpty(blobSettings.ConnectionString))
+    // Log diagnostic info (visible in Azure Log Stream)
+    Console.WriteLine($"[DIAGNOSTIC] Blob ConnectionString: {(string.IsNullOrWhiteSpace(blobSettings.ConnectionString) ? "<empty>" : "set")}");
+    Console.WriteLine($"[DIAGNOSTIC] Blob ContainerName: {blobSettings.ContainerName}");
+
+    if (string.IsNullOrWhiteSpace(blobSettings.ConnectionString))
     {
-        throw new InvalidOperationException("Azure Blob Storage ConnectionString is null or empty after configuration binding. Check environment variables or appsettings.json.");
+        throw new InvalidOperationException("Azure Blob Storage ConnectionString is null or empty. Check Azure environment variables or appsettings.");
     }
 
     return new BlobServiceClient(blobSettings.ConnectionString);

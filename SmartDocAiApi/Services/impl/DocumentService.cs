@@ -30,6 +30,10 @@ namespace SmartDocAiApi.Services.impl
                 // Log the error - replace with your logger if available
                 Console.WriteLine($"Error uploading document: {ex.Message}");
                 // Optionally, you can rethrow or handle the error gracefully
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
                 throw;
             }
 
